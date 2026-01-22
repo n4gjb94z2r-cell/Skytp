@@ -1,0 +1,55 @@
+-- OneScript_TP.lua
+
+local player = game:GetService("Players").LocalPlayer
+local savedCFrame = nil
+
+-- ルート取得
+local function getRoot()
+    local c = player.Character or player.CharacterAdded:Wait()
+    return c:WaitForChild("HumanoidRootPart")
+end
+
+-- UI生成
+local gui = Instance.new("ScreenGui")
+gui.Name = "TPGui"
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromOffset(180, 110)
+frame.Position = UDim2.new(1, -190, 1, -120)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BackgroundTransparency = 0.1
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+-- ボタン作成関数
+local function makeButton(text, y, color)
+    local b = Instance.new("TextButton", frame)
+    b.Size = UDim2.new(1, -20, 0, 40)
+    b.Position = UDim2.new(0, 10, 0, y)
+    b.Text = text
+    b.Font = Enum.Font.Gotham
+    b.TextSize = 14
+    b.TextColor3 = Color3.new(1, 1, 1)
+    b.BackgroundColor3 = color
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
+    return b
+end
+
+local saveBtn = makeButton("SAVE", 10, Color3.fromRGB(60, 180, 255))
+local tpBtn   = makeButton("TP", 60, Color3.fromRGB(255, 90, 90))
+
+-- 座標保存
+saveBtn.Activated:Connect(function()
+    savedCFrame = getRoot().CFrame
+    saveBtn.Text = "SAVED"
+    task.delay(1, function()
+        saveBtn.Text = "SAVE"
+    end)
+end)
+
+-- テレポート
+tpBtn.Activated:Connect(function()
+    if savedCFrame then
+        getRoot().CFrame = savedCFrame
+    end
+end)
